@@ -50,8 +50,8 @@ Whenever you find a question, it should be answered in place. All questions are 
 - [x] Modify the `test.py` script to only use the `2.7_80x80_MiniFASNetV2.pth` model.
 - [x] Modify the `test.py` script to output only the genuine score.
 - [x] Run the `test.py` script for `image_F1.jpg`, `image_F2.jpg` and `image_T1.jpg` images.
-- [ ] What are the genuine scores for each one of them?
-  - [ ] Genuine scores for `image_F1.jpg`, `image_F2.jpg` and `image_T1.jpg` are `0.09519024`, `0.00132873` and `0.903481` respectively.
+- [x] What are the genuine scores for each one of them?
+  - [x] Genuine scores for `image_F1.jpg`, `image_F2.jpg` and `image_T1.jpg` are `0.09519024`, `0.00132873` and `0.903481` respectively.
 - [x] You will have to reproduce the scores from the previous step later when using TFLite.
 
 ### 4. Converting the model to TFLite
