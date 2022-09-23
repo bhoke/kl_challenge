@@ -1,0 +1,11 @@
+.DS_Store
+.idea/*
+build/*
+!assets/models/.keep
+assets/models/*
+cmake-build-debug/*
+__pycache__
+tf_model
+*.onnx
+*.json
+Silent-Face-Anti-Spoofing
