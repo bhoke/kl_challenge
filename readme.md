@@ -43,7 +43,7 @@ Whenever you find a question, it should be answered in place. All questions are 
 - What is the index for the genuine (real face) classification score?
   - Genuine index is 1.
 - Apart from the anti-spoofing models, does the code use any other ML model?
-  - Code uses Face detection model to crop the face area from the image.s
+  - Code uses Face detection model to crop the face area from the images.
 
 ### 3. Testing Silent-Face-Anti-Spoofing
 
