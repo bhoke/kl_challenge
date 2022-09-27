@@ -66,7 +66,7 @@ Whenever you find a question, it should be answered in place. All questions are 
  
 - [x] You should generate the test images for your C++ code and place them inside `test/fixtures`.
 - Note from `test/test_main.cpp` that they must be in `bmp` format. Any hunch why we use `bmp` instead of `jpg` here?
-  - `bmp` is an uncompressed format. I guess, when we save it as jpeg the pixel values may change.
+  - `bmp` is an uncompressed format. I guess, when we save it as `jpeg` the pixel values may change. As a result, we could not observe exact same result. 
 ### 6. Implementing the C++ code
 
 - Your task here is to complete the `model.cpp` file. There are 3 methods to be implemented:
