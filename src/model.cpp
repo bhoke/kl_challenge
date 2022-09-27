@@ -35,22 +35,11 @@ float Model::inference(const char *img_path)
 {
     float *model_input = interpreter_->typed_input_tensor<float>(0);
     cv::Mat image = cv::imread(img_path, cv::IMREAD_COLOR);
-    // cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-    // float *new_img_addr;
-    // this->convert_image(image, new_img_addr);
-    // fprintf(stdout, "w = %d, h = %d, c = %d \n", image.rows, image.cols, image.channels());
-    // fprintf(stdout,"new_img_addr[last]= %f\n",*(new_img_addr+image.rows * image.cols * image.channels() -1));
-    int dims[] = {3, image.rows, image.cols};
-    cv::Mat image_f;
-    image.convertTo(image_f, CV_32F);
-    cv::Mat chw(3, dims, CV_32FC1);
-    std::vector<cv::Mat> planes = {
-        cv::Mat(image.rows, image.cols, CV_32F, chw.ptr<float>(0)), // swap 0 and 2 and you can avoid the bgr->rgb conversion !
-        cv::Mat(image.rows, image.cols, CV_32F, chw.ptr<float>(1)),
-        cv::Mat(image.rows, image.cols, CV_32F, chw.ptr<float>(2))};
-    cv::split(image_f, planes);
-
-    memcpy(model_input, chw.ptr<float>(0), chw.total() * sizeof(float));
+    int img_size = image.rows * image.cols * image.channels();
+    float *new_img_flat = new float[img_size];
+    convert_image(image, new_img_flat);
+    memcpy(model_input, new_img_flat, img_size * sizeof(float));
+    delete[] new_img_flat;
     interpreter_->Invoke();
     float *output = interpreter_->typed_output_tensor<float>(0);
     return output[1];
@@ -63,5 +52,15 @@ void Model::convert_image(const cv::Mat &src, float *dest)
         fprintf(stderr, "Failed to load image\n");
         exit(-1);
     }
-    fprintf(stdout, "%p", (void *)dest);
+    int dims[] = {3, src.rows, src.cols};
+    cv::Mat image_f;
+    src.convertTo(image_f, CV_32F);
+    cv::Mat chw(3, dims, CV_32FC1);
+    std::vector<cv::Mat> planes = {
+        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(0)), // 80 x 80 x 4 bytes
+        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(1)),
+        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(2))};
+    cv::split(image_f, planes);
+    for(size_t i = 0; i < chw.total(); i++)
+        dest[i] = chw.at<float>(i);
 }
