@@ -52,15 +52,11 @@ void Model::convert_image(const cv::Mat &src, float *dest)
         fprintf(stderr, "Failed to load image\n");
         exit(-1);
     }
-    int dims[] = {3, src.rows, src.cols};
-    cv::Mat image_f;
-    src.convertTo(image_f, CV_32F);
-    cv::Mat chw(3, dims, CV_32FC1);
-    std::vector<cv::Mat> planes = {
-        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(0)), // 80 x 80 x 4 bytes
-        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(1)),
-        cv::Mat(src.rows, src.cols, CV_32F, chw.ptr<float>(2))};
-    cv::split(image_f, planes);
-    for(size_t i = 0; i < chw.total(); i++)
-        dest[i] = chw.at<float>(i);
+    int idx = 0;
+    for(int ch = 0; ch < src.channels(); ch++)
+        for(int row = 0; row < src.rows; row++)
+            for(int col = 0; col < src.cols; col++){
+                dest[idx] = (float) src.at<cv::Vec3b>(row, col)[ch];
+                idx ++;
+            }
 }
