@@ -53,10 +53,15 @@ void Model::convert_image(const cv::Mat &src, float *dest)
         exit(-1);
     }
     int idx = 0;
-    for(int ch = 0; ch < src.channels(); ch++)
-        for(int row = 0; row < src.rows; row++)
-            for(int col = 0; col < src.cols; col++){
-                dest[idx] = (float) src.at<cv::Vec3b>(row, col)[ch];
-                idx ++;
+    for (int ch = 0; ch < src.channels(); ch++)
+    {
+        for (int row = 0; row < src.rows; row++)
+        {
+            for (int col = 0; col < src.cols; col++)
+            {
+                dest[idx] = (float)src.at<cv::Vec3b>(row, col)[ch];
+                idx++;
             }
+        }
+    }
 }
