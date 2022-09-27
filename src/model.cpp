@@ -4,20 +4,25 @@
 #include "kl_error.hpp"
 #include "math.h"
 
-float softmax_genuine(float* out_arr){
-    float log_sum = 0.f;
-    for(int i =0 ; i < 3; i++){
-        out_arr[i] = std::exp(out_arr[i]);
-        log_sum += out_arr[i];
-    }
-    return out_arr[1] / log_sum;
-}
-
 KLError Model::init(const char *model_path)
 {
     try
     {
         model_ = tflite::FlatBufferModel::BuildFromFile(model_path);
+        tflite::ops::builtin::BuiltinOpResolver resolver;
+        tflite::InterpreterBuilder(*model_, resolver)(&interpreter_);
+
+        if (tflite::InterpreterBuilder(*model_, resolver)(&interpreter_) != kTfLiteOk)
+        {
+            fprintf(stderr, "Failed to build interpreter.");
+            exit(-1);
+        }
+
+        if (interpreter_->AllocateTensors() != kTfLiteOk)
+        {
+            fprintf(stderr, "Failed to allocate tensor\n");
+            exit(-1);
+        }
     }
     catch (...)
     {
@@ -28,20 +33,6 @@ KLError Model::init(const char *model_path)
 
 float Model::inference(const char *img_path)
 {
-    tflite::ops::builtin::BuiltinOpResolver resolver;
-    tflite::InterpreterBuilder(*model_, resolver)(&interpreter_);
-
-    if (tflite::InterpreterBuilder(*model_, resolver)(&interpreter_) != kTfLiteOk)
-    {
-        fprintf(stderr, "Failed to build interpreter.");
-        exit(-1);
-    }
-
-    if (interpreter_->AllocateTensors() != kTfLiteOk)
-    {
-        fprintf(stderr, "Failed to allocate tensor\n");
-        exit(-1);
-    }
     float *model_input = interpreter_->typed_input_tensor<float>(0);
     cv::Mat image = cv::imread(img_path, cv::IMREAD_COLOR);
     // cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
@@ -62,16 +53,15 @@ float Model::inference(const char *img_path)
     memcpy(model_input, chw.ptr<float>(0), chw.total() * sizeof(float));
     interpreter_->Invoke();
     float *output = interpreter_->typed_output_tensor<float>(0);
-    return softmax_genuine(output);
-    // return 0.0;
+    return output[1];
 }
 
 void Model::convert_image(const cv::Mat &src, float *dest)
 {
-    if(src.empty())
+    if (src.empty())
     {
         fprintf(stderr, "Failed to load image\n");
         exit(-1);
     }
-    fprintf(stdout,"%p", (void*)dest);
+    fprintf(stdout, "%p", (void *)dest);
 }

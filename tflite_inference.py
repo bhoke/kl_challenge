@@ -18,6 +18,4 @@ if __name__ == "__main__":
     model.set_tensor(inputLayer, [img_t])
     model.invoke()
     preds = model.get_tensor(outputLayer)[0]
-    preds_soft = np.exp(preds) / np.sum(np.exp(preds))
     print(preds)
-    print(preds_soft)
